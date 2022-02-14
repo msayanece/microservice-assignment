@@ -5,6 +5,14 @@ jwt:
   secret: myJWTSecret12345
 
 spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sayan
+    password: pass
+  h2:
+    console:
+      enabled: false
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher

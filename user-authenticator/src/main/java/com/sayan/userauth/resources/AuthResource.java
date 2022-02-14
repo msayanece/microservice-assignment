@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/jwt")
 public class AuthResource {
 
     @Autowired
@@ -28,9 +29,9 @@ public class AuthResource {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/authenticate")
+    @PostMapping("/auth")
     public ResponseEntity<JwtResponse> authenticate(@RequestBody JwtRequest jwtRequest) throws Exception{
-
+        System.out.println("AUTHENTICATION STARTS...");
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
