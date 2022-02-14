@@ -41,7 +41,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.csrf()
                 .disable()
                 .authorizeRequests()
-                .antMatchers("/auth",
+                .antMatchers("/authenticate",
                         "/test",
                         "/v2/api-docs",
                         "/swagger-resources/**",
