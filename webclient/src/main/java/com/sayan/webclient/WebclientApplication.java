@@ -17,7 +17,7 @@ public class WebclientApplication {
 
 	@LoadBalanced
 	@Bean
-	private RestTemplate restTemplate(){
+	public RestTemplate restTemplate(){
 		return new RestTemplate();
 	}
 }
