@@ -1,5 +1,6 @@
 package com.sayan.userauth.models;
 
+import com.sayan.userauth.entities.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

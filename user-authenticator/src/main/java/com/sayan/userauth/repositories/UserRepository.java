@@ -1,6 +1,6 @@
 package com.sayan.userauth.repositories;
 
-import com.sayan.userauth.models.User;
+import com.sayan.userauth.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
