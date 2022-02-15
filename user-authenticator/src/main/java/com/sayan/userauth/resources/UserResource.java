@@ -27,12 +27,22 @@ public class UserResource {
     @GetMapping("/")
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false,
             paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
-    public ResponseEntity<UserDetails> getUserDetails(){
+    public ResponseEntity<UserModel> getUserDetails(){
         logger.trace("getUserDetails: called");
         MyUserDetails userDetails = (MyUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         logger.info("getUserDetails: userDetails: " + userDetails);
-        ResponseEntity<UserDetails> response =
-                new ResponseEntity<>(userService.loadUserByUsername(userDetails.getUsername()), HttpStatus.OK);
+        MyUserDetails resultUserDetails = (MyUserDetails) userService.loadUserByUsername(userDetails.getUsername());
+        User resultUser = resultUserDetails.getUser();
+        //create UserModel Object
+        UserModel user = UserModel.builder()
+                .username(resultUser.getUsername())
+                .firstName(resultUser.getFirstName())
+                .email(resultUser.getEmail())
+                .lastName(resultUser.getLastName())
+                .password(resultUser.getPassword())
+                .phone(resultUser.getPhone())
+                .build();
+        ResponseEntity<UserModel> response = new ResponseEntity<>(user, HttpStatus.OK);
         logger.trace("getUserDetails: response: " + response);
         return response;
     }

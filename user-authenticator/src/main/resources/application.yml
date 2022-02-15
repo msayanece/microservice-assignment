@@ -9,6 +9,8 @@ logging:
     root: INFO
 
 spring:
+  application:
+    name: user-auth-service
   datasource:
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
