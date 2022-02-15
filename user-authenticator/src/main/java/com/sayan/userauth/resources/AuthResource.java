@@ -40,7 +40,11 @@ public class AuthResource {
                     )
             );
         } catch (BadCredentialsException e) {
+            e.printStackTrace();
             throw new Exception("INVALID_CREDENTIALS", e);
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new Exception("INVALID_CREDENTIALS GENERAL EXCEPTION", e);
         }
 
         final UserDetails userDetails

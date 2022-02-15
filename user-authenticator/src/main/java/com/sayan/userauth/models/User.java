@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.Generated;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
