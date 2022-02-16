@@ -1,6 +1,7 @@
 package com.sayan.webclient.controllers;
 
 import com.sayan.webclient.models.LoginModel;
+import com.sayan.webclient.models.ResetPasswordModel;
 import com.sayan.webclient.models.UserModel;
 import com.sayan.webclient.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,14 @@ public class WebController {
             @CookieValue(value = "token", defaultValue = "test") String token){
         String s = "";
         System.out.println(loginModel);
+        return "redirect:dashboard";
+    }
+    @PostMapping("/doResetPassword")
+    public String doResetPassword(
+            ResetPasswordModel resetPasswordModel,
+            @CookieValue(value = "token", defaultValue = "test") String token){
+        String s = "";
+        System.out.println(resetPasswordModel);
         return "redirect:dashboard";
     }
 
