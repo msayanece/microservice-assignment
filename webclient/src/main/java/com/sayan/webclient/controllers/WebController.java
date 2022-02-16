@@ -1,5 +1,6 @@
 package com.sayan.webclient.controllers;
 
+import com.sayan.webclient.models.AddNewPasswordModel;
 import com.sayan.webclient.models.LoginModel;
 import com.sayan.webclient.models.ResetPasswordModel;
 import com.sayan.webclient.models.UserModel;
@@ -37,6 +38,11 @@ public class WebController {
         String s = "";
         return "reset-password";
     }
+    @GetMapping("/newPassword")
+    public String newPassword(){
+        String s = "";
+        return "new-password";
+    }
 
     @PostMapping("/doLogin")
     public String doLogin(
@@ -48,10 +54,16 @@ public class WebController {
     }
     @PostMapping("/doResetPassword")
     public String doResetPassword(
-            ResetPasswordModel resetPasswordModel,
-            @CookieValue(value = "token", defaultValue = "test") String token){
+            ResetPasswordModel resetPasswordModel){
         String s = "";
         System.out.println(resetPasswordModel);
+        return "redirect:newPassword";
+    }
+    @PostMapping("/addNewPassword")
+    public String addNewPassword(
+            AddNewPasswordModel addNewPasswordModel){
+        String s = "";
+        System.out.println(addNewPasswordModel);
         return "redirect:dashboard";
     }
     @PostMapping("/doRegister")
@@ -64,8 +76,13 @@ public class WebController {
     }
 
     @GetMapping("/userDetails")
-    public String getUserDetails(@CookieValue(value = "token", defaultValue = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXlhbiIsImV4cCI6MTY0NDk0NzMwNywiaWF0IjoxNjQ0OTQ2MTA3fQ.Qzp-3jAGF0QHj_i_kmRCGg0eobcRa3HfA-JugRrNhkELsQVfwXcexaGNVwf28Khx59Ket66jjCMPETO5693tJg") String token){
+    public String getUserDetails(@CookieValue(value = "token", defaultValue = "test") String token){
         UserModel userDetails = userService.getUserDetails(token);
         return userDetails.toString();
+    }
+
+    @GetMapping("/logout")
+    public String logout(@CookieValue(value = "token", defaultValue = "test") String token){
+        return "redirect:login";
     }
 }
