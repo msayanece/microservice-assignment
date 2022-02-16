@@ -1,5 +1,11 @@
 server:
   port: 8082
-spring:
+  servlet:
+    context-path: /
   application:
     name: webclient-service
+  thymeleaf:
+    suffix: .html
+eureka:
+  instance:
+    preferIpAddress: true

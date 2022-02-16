@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http:/www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Login - Microservice Assignment</title>
+    <link type="text/css" href="css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<section class="ftco-section">
+    <div class="container">
+         <div class="row justify-content-center">
+            <div class="col-md-7 col-lg-5">
+                <div class="wrap">
+                    <div class="login-wrap p-4 p-md-5">
+                        <div class="d-flex">
+                            <div class="w-100">
+                                <h3 class="mb-4">Sign In</h3>
+                            </div>
+                        </div>
+                        <form th:action="@{/doLogin}" method="post" class="signin-form">
+                            <div class="form-group mt-3">
+                                <input id="username" type="text" class="form-control" name="username" required>
+                                <label class="form-control-placeholder" for="username">Username</label>
+                            </div>
+                            <div class="form-group">
+                                <input id="password" type="password" class="form-control" name="password"required>
+                                <label class="form-control-placeholder" for="password">Password</label>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="form-control btn btn-primary rounded submit px-3">Submit</button>
+                            </div>
+                            <div class="form-group d-md-flex">
+                                <div class="w-50 text-left">
+                                    <p>Not a member? <a th:href="@{/register}">Register</a></p>
+                                </div>
+                                <div class="w-50 text-md-right">
+                                    <a th:href="@{/resetPassword}">Forgot Password</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+</body>
+</html>

@@ -25,7 +25,7 @@ public class UserService {
         HttpEntity<String> request = new HttpEntity<String>(headers);
         Map<String, String> map = new HashMap<>();
         ResponseEntity<UserModel> responseEntity =
-                restTemplate.exchange(url, HttpMethod.GET, request, UserModel.class, map);
+                restTemplate.exchange(url, HttpMethod.GET, request, UserModel.class);
         return responseEntity.getBody();
     }
 }
