@@ -1,1 +1,66 @@
-<h1>REGISTRATION</h1>
+<!DOCTYPE html>
+<html xmlns:th="http:/www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Registration - Microservice Assignment</title>
+    <link type="text/css" href="css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<section class="ftco-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7 col-lg-5">
+                <div class="wrap">
+                    <div class="login-wrap p-4 p-md-5">
+                        <div class="d-flex">
+                            <div class="w-100">
+                                <h3 class="mb-4">Registration</h3>
+                            </div>
+                        </div>
+                        <form th:action="@{/doRegister}" method="post" class="signin-form">
+                            <div class="form-group mt-3">
+                                <input id="firstName" type="email" class="form-control" name="firstName" required>
+                                <label class="form-control-placeholder" for="firstName">First Name</label>
+                            </div>
+                            <div class="form-group mt-3">
+                                <input id="lastName" type="email" class="form-control" name="lastName" required>
+                                <label class="form-control-placeholder" for="lastName">Last Name</label>
+                            </div>
+                            <div class="form-group mt-3">
+                                <input id="email" type="email" class="form-control" name="email" required>
+                                <label class="form-control-placeholder" for="email">Email Address</label>
+                            </div>
+                            <div class="form-group mt-3">
+                                <input id="phone" type="email" class="form-control" name="phone" required>
+                                <label class="form-control-placeholder" for="phone">Phone Number</label>
+                            </div>
+                            <div class="form-group mt-3">
+                                <input id="username" type="email" class="form-control" name="username" required>
+                                <label class="form-control-placeholder" for="username">Username</label>
+                            </div>
+                            <div class="form-group">
+                                <input id="password" type="password" class="form-control" name="password"required>
+                                <label class="form-control-placeholder" for="password">Password</label>
+                            </div>
+                            <div class="form-group">
+                                <input id="confirmPassword" type="password" class="form-control" name="confirmPassword"required>
+                                <label class="form-control-placeholder" for="confirmPassword">Confirm Password</label>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="form-control btn btn-primary rounded submit px-3">Register</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+</body>
+</html>

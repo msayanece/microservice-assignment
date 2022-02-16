@@ -54,6 +54,14 @@ public class WebController {
         System.out.println(resetPasswordModel);
         return "redirect:dashboard";
     }
+    @PostMapping("/doRegister")
+    public String doRegister(
+            UserModel userModel,
+            @CookieValue(value = "token", defaultValue = "test") String token){
+        String s = "";
+        System.out.println(userModel);
+        return "redirect:dashboard";
+    }
 
     @GetMapping("/userDetails")
     public String getUserDetails(@CookieValue(value = "token", defaultValue = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXlhbiIsImV4cCI6MTY0NDk0NzMwNywiaWF0IjoxNjQ0OTQ2MTA3fQ.Qzp-3jAGF0QHj_i_kmRCGg0eobcRa3HfA-JugRrNhkELsQVfwXcexaGNVwf28Khx59Ket66jjCMPETO5693tJg") String token){
