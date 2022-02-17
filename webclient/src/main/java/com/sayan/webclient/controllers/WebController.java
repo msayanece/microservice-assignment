@@ -1,68 +1,62 @@
 package com.sayan.webclient.controllers;
 
-import com.sayan.webclient.models.AddNewPasswordModel;
-import com.sayan.webclient.models.LoginModel;
-import com.sayan.webclient.models.ResetPasswordModel;
-import com.sayan.webclient.models.UserModel;
+import com.sayan.webclient.models.*;
 import com.sayan.webclient.services.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class WebController {
 
+    private final Logger logger = LoggerFactory.getLogger(WebController.class);
+
     @Autowired
     private UserService userService;
 
+    //---------Pages------------
+
     @GetMapping("/login")
-    public String loginPage(@CookieValue(value = "token", defaultValue = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXlhbiIsImV4cCI6MTY0NDk0NzMwNywiaWF0IjoxNjQ0OTQ2MTA3fQ.Qzp-3jAGF0QHj_i_kmRCGg0eobcRa3HfA-JugRrNhkELsQVfwXcexaGNVwf28Khx59Ket66jjCMPETO5693tJg") String token){
-        String s = "";
+    public String loginPage(){
         return "login";
     }
     @GetMapping("/dashboard")
-    public String dashboardPage(@CookieValue(value = "token", defaultValue = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXlhbiIsImV4cCI6MTY0NDk0NzMwNywiaWF0IjoxNjQ0OTQ2MTA3fQ.Qzp-3jAGF0QHj_i_kmRCGg0eobcRa3HfA-JugRrNhkELsQVfwXcexaGNVwf28Khx59Ket66jjCMPETO5693tJg") String token){
-        String s = "";
+    public String dashboardPage(@CookieValue(value = "token", defaultValue = "test") String token){
         return "dashboard";
     }
     @GetMapping("/register")
     public String register(){
-        String s = "";
         return "registration";
     }
     @GetMapping("/resetPassword")
     public String resetPassword(){
-        String s = "";
         return "reset-password";
     }
     @GetMapping("/newPassword")
     public String newPassword(){
-        String s = "";
         return "new-password";
     }
+
+    //-------------Actions---------------
 
     @PostMapping("/doLogin")
     public String doLogin(
             LoginModel loginModel,
             @CookieValue(value = "token", defaultValue = "test") String token){
-        String s = "";
         System.out.println(loginModel);
         return "redirect:dashboard";
     }
     @PostMapping("/doResetPassword")
     public String doResetPassword(
             ResetPasswordModel resetPasswordModel){
-        String s = "";
         System.out.println(resetPasswordModel);
         return "redirect:newPassword";
     }
     @PostMapping("/addNewPassword")
     public String addNewPassword(
             AddNewPasswordModel addNewPasswordModel){
-        String s = "";
         System.out.println(addNewPasswordModel);
         return "redirect:dashboard";
     }
@@ -70,9 +64,21 @@ public class WebController {
     public String doRegister(
             UserModel userModel,
             @CookieValue(value = "token", defaultValue = "test") String token){
-        String s = "";
         System.out.println(userModel);
         return "redirect:dashboard";
+    }
+
+    @PostMapping("/updateProfile")
+    @ResponseBody
+    public UserModel updateProfile(
+            @RequestBody UpdateUserModel updateUserModel,
+            @CookieValue(value = "token", defaultValue = "test") String token){
+        System.out.println(updateUserModel);
+        UserModel userModel = UserModel.builder()
+                .firstName(updateUserModel.getFirstName())
+                .lastName(updateUserModel.getLastName())
+                .build();
+        return userModel;
     }
 
     @GetMapping("/userDetails")
