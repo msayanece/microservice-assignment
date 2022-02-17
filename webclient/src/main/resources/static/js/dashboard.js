@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    $("#wait").css('visibility', 'hidden');
     $(document).ajaxStart(function(){
       $("#wait").css('visibility', 'visible');
     });

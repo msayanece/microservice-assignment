@@ -61,11 +61,34 @@ public class UserResource {
                 .firstName(resultUser.getFirstName())
                 .email(resultUser.getEmail())
                 .lastName(resultUser.getLastName())
-                .password(resultUser.getPassword())
+//                .password(resultUser.getPassword())
                 .phone(resultUser.getPhone())
                 .build();
         ResponseEntity<UserModel> response = new ResponseEntity<>(userModelResult, HttpStatus.CREATED);
         logger.trace("createUser: response: " + response);
+        return response;
+    }
+
+    @PostMapping("/update")
+    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false,
+            paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
+    public ResponseEntity<UserModel> updateUser(@RequestBody UserModel user) throws RuntimeException{
+        logger.trace("updateUser: called");
+        if (user == null){
+            logger.error("updateUser: User object null");
+            throw new RuntimeException("User is Required.");
+        }
+        MyUserDetails userDetails = (MyUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        logger.info("getUserDetails: userDetails: " + userDetails);
+        User resultUser = userService.updateUser(user, userDetails.getUsername());
+        UserModel userModelResult = UserModel.builder()
+                .firstName(resultUser.getFirstName())
+                .email(resultUser.getEmail())
+                .lastName(resultUser.getLastName())
+                .phone(resultUser.getPhone())
+                .build();
+        ResponseEntity<UserModel> response = new ResponseEntity<>(userModelResult, HttpStatus.OK);
+        logger.trace("updateUser: response: " + response);
         return response;
     }
 

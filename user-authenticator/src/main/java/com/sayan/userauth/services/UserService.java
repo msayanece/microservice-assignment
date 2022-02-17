@@ -44,6 +44,18 @@ public class UserService implements UserDetailsService {
         return userRepository.save(userEntity);
     }
 
+    public User updateUser(UserModel user, String username) {
+        User foundUser = userRepository.findByUsername(username);
+        if (foundUser == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        foundUser.setFirstName(user.getFirstName());
+        foundUser.setLastName(user.getLastName());
+        foundUser.setEmail(user.getEmail());
+        foundUser.setPhone(user.getPhone());
+        return userRepository.save(foundUser);
+    }
+
     public User changePassword(PasswordModel passwordModel, String username){
         final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(11);
         //find user

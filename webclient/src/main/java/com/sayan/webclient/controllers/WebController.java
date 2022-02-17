@@ -98,14 +98,8 @@ public class WebController {
     public UserModel updateProfile(
             @RequestBody UpdateUserModel updateUserModel,
             @CookieValue(value = ACCESS_TOKEN, defaultValue = "") String token){
-        System.out.println(updateUserModel);
-        UserModel userModel = UserModel.builder()
-                .firstName(updateUserModel.getFirstName())
-                .lastName(updateUserModel.getLastName())
-                .phone(updateUserModel.getPhone())
-                .email(updateUserModel.getEmail())
-                .build();
-        return userModel;
+        logger.info(updateUserModel.toString());
+        return userService.updateUser(token, updateUserModel);
     }
 
     @GetMapping("/userDetails")

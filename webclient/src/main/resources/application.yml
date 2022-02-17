@@ -13,6 +13,7 @@ eureka:
 service:
   url:
     register: /user/create
+    updateUser: /user/update
     login: /jwt/auth
     logout: /jwt/invalidate
     getUserDetails: /user/

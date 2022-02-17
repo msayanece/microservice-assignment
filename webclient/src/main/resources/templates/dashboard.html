@@ -5,6 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Dashboard - Microservice Assignment</title>
     <link type="text/css" href="css/bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+  .centered {
+    position: fixed;
+    top: 50%;
+    left: 45%;
+    background: transparent
+    transform: translate(-50%, -50%);
+    transform: -webkit-translate(-50%, -50%);
+    transform: -moz-translate(-50%, -50%);
+    transform: -ms-translate(-50%, -50%);
+    color:darkred;
+  }
+</style>
 </head>
 
 <body>
@@ -58,7 +71,9 @@
                 </div>
             </div>
         </div>
-        <p id="wait" class="text-center text-uppercase my-auto">Loading...</p>
+        <div id="wait" class="centered">
+            <h1>...</h1>
+        </div>
     </div>
 </section>
 

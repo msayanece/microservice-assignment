@@ -1,9 +1,6 @@
 package com.sayan.webclient.services;
 
-import com.sayan.webclient.models.JwtResponse;
-import com.sayan.webclient.models.LoginModel;
-import com.sayan.webclient.models.LogoutResponse;
-import com.sayan.webclient.models.UserModel;
+import com.sayan.webclient.models.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +22,8 @@ public class UserService {
     private String authServer;
     @Value("${service.url.getUserDetails}")
     private String getUserDetailsUrl;
+    @Value("${service.url.updateUser}")
+    private String updateUserUrl;
     @Value("${service.url.register}")
     private String registerUrl;
     @Value("${service.url.login}")
@@ -50,6 +49,34 @@ public class UserService {
             e.printStackTrace();
             return null;
         }
+        return responseEntity.getBody();
+    }
+
+    public UserModel updateUser(String token, UpdateUserModel updateUserModel) {
+        ResponseEntity<UserModel> responseEntity = null;
+        UserModel user = UserModel.builder()
+                .firstName(updateUserModel.getFirstName())
+                .lastName(updateUserModel.getLastName())
+                .email(updateUserModel.getEmail())
+                .phone(updateUserModel.getPhone())
+                .build();
+
+        String url = authServer + updateUserUrl;
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + token);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<UserModel> request = new HttpEntity<>(user, headers);
+
+        try{
+            responseEntity = restTemplate.exchange(url, HttpMethod.POST, request, UserModel.class);
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+        if (responseEntity.getBody() == null) {
+            return null;
+        }
+        logger.info(Objects.requireNonNull(responseEntity.getBody()).toString());
         return responseEntity.getBody();
     }
 
