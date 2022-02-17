@@ -1,12 +1,16 @@
 package com.sayan.webclient.services;
 
+import com.sayan.webclient.models.JwtResponse;
+import com.sayan.webclient.models.LoginModel;
 import com.sayan.webclient.models.UserModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
@@ -22,6 +26,8 @@ public class UserService {
     private String getUserDetailsUrl;
     @Value("${service.url.register}")
     private String registerUrl;
+    @Value("${service.url.login}")
+    private String loginUrl;
     @Autowired
     private RestTemplate restTemplate;
 
@@ -37,17 +43,45 @@ public class UserService {
     }
 
     public boolean register(UserModel userModel) {
+        ResponseEntity<UserModel> responseEntity = null;
+
         String url = authServer + registerUrl;
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<UserModel> request = new HttpEntity<>(userModel, headers);
 
-        ResponseEntity<UserModel> responseEntity =
-                restTemplate.exchange(url, HttpMethod.POST, request, UserModel.class);
+        try{
+            responseEntity = restTemplate.exchange(url, HttpMethod.POST, request, UserModel.class);
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
         if (responseEntity.getBody() == null) {
             return false;
         }
         logger.info(Objects.requireNonNull(responseEntity.getBody()).toString());
         return true;
+    }
+
+    @Nullable
+    public String login(LoginModel loginModel) {
+        ResponseEntity<JwtResponse> responseEntity = null;
+
+        String url = authServer + loginUrl;
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<LoginModel> request = new HttpEntity<>(loginModel, headers);
+
+        try {
+            responseEntity = restTemplate.exchange(url, HttpMethod.POST, request, JwtResponse.class);
+        }catch (HttpClientErrorException e){
+            e.printStackTrace();
+            return null;
+        }
+        if (responseEntity.getBody() == null) {
+            return null;
+        }
+        logger.info(Objects.requireNonNull(responseEntity.getBody()).toString());
+        return responseEntity.getBody().getJwtToken();
     }
 }

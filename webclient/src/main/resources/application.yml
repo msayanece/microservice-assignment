@@ -13,5 +13,8 @@ eureka:
 service:
   url:
     register: /user/create
+    login: /jwt/auth
     getUserDetails: /user/
   authServer: http://user-auth-service
+
+env: local
