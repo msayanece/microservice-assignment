@@ -2,6 +2,7 @@ package com.sayan.webclient.services;
 
 import com.sayan.webclient.models.JwtResponse;
 import com.sayan.webclient.models.LoginModel;
+import com.sayan.webclient.models.LogoutResponse;
 import com.sayan.webclient.models.UserModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,17 +29,27 @@ public class UserService {
     private String registerUrl;
     @Value("${service.url.login}")
     private String loginUrl;
+    @Value("${service.url.logout}")
+    private String logoutUrl;
     @Autowired
     private RestTemplate restTemplate;
 
+    @Nullable
     public UserModel getUserDetails(String token) {
+        ResponseEntity<UserModel> responseEntity = null;
+
         String url = authServer + getUserDetailsUrl;
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + token);
         HttpEntity<String> request = new HttpEntity<String>(headers);
         Map<String, String> map = new HashMap<>();
-        ResponseEntity<UserModel> responseEntity =
-                restTemplate.exchange(url, HttpMethod.GET, request, UserModel.class);
+
+        try{
+            responseEntity = restTemplate.exchange(url, HttpMethod.GET, request, UserModel.class);
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
         return responseEntity.getBody();
     }
 
@@ -83,5 +94,24 @@ public class UserService {
         }
         logger.info(Objects.requireNonNull(responseEntity.getBody()).toString());
         return responseEntity.getBody().getJwtToken();
+    }
+
+    public Boolean doLogout(String token) {
+        ResponseEntity<LogoutResponse> responseEntity = null;
+
+        String url = authServer + logoutUrl;
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + token);
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> request = new HttpEntity<>(headers);
+
+        try {
+            responseEntity = restTemplate.exchange(url, HttpMethod.POST, request, LogoutResponse.class);
+        }catch (HttpClientErrorException e){
+            e.printStackTrace();
+            return false;
+        }
+        logger.info(Objects.requireNonNull(responseEntity.getBody()).toString());
+        return responseEntity.getBody().getResult().equals("success");
     }
 }

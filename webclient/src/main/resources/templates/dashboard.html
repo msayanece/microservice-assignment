@@ -11,8 +11,11 @@
 <section class="ftco-section">
     <div class="container">
         <div class="p-2 float-right">
-            <span>Welcome Sayan </span>
-            <a th:href="@{/logout}" class="btn btn-info btn-sm">Logout</a>
+            <p>
+                <span>Welcome </span>
+                <span th:text="${user.username} "> User </span>
+                <a th:href="@{/logout}" class="btn btn-info btn-sm">Logout</a>
+            </p>
         </div>
         <div class="row justify-content-center">
             <div class="col-md-7 col-lg-5">
@@ -29,23 +32,23 @@
                                 <p class="card-text">Manage your profile</p>
                                 <form class="signin-form">
                                     <div class="form-group mt-4">
-                                        <input id="firstName" type="text" class="form-control" name="firstName" required>
+                                        <input id="firstName" type="text" class="form-control" name="firstName" th:value="${user.firstName}" required>
                                         <label class="form-control-placeholder" for="firstName">First Name</label>
                                     </div>
                                     <div class="form-group mt-4">
-                                        <input id="lastName" type="text" class="form-control" name="lastName" required>
+                                        <input id="lastName" type="text" class="form-control" name="lastName" th:value="${user.lastName}"required>
                                         <label class="form-control-placeholder" for="lastName">Last Name</label>
                                     </div>
                                     <div class="form-group mt-4">
-                                        <input id="email" type="email" class="form-control" name="email" required>
+                                        <input id="email" type="email" class="form-control" name="email" th:value="${user.email}"required>
                                         <label class="form-control-placeholder" for="email">Email Address</label>
                                     </div>
                                     <div class="form-group mt-4">
-                                        <input id="phone" type="number" maxlength="10" class="form-control" name="phone" required>
+                                        <input id="phone" type="number" maxlength="10" class="form-control" name="phone" th:value="${user.phone}"required>
                                         <label class="form-control-placeholder" for="phone">Phone Number</label>
                                     </div>
                                     <div class="form-group">
-                                        <button id="updateBtn" class="form-control btn btn-primary rounded submit px-3">Save Changes</button>
+                                        <button id="updateBtn" class="form-control btn btn-primary rounded submit px-3">Update Changes</button>
                                     </div>
                                 </form>
                             </div>
@@ -55,6 +58,7 @@
                 </div>
             </div>
         </div>
+        <p id="wait" class="text-center text-uppercase my-auto">Loading...</p>
     </div>
 </section>
 

@@ -1,4 +1,11 @@
 $(document).ready(function() {
+    $(document).ajaxStart(function(){
+      $("#wait").css('visibility', 'visible');
+    });
+
+    $(document).ajaxComplete(function(){
+        $("#wait").css('visibility', 'hidden');
+    });
     $("#updateBtn").click(function(event) {
         event.preventDefault();
         var data = {
@@ -21,8 +28,11 @@ $(document).ready(function() {
         		success : function(data) {
         			console.log("SUCCESS UPDATE PROFILE");
         			console.log(data);
-        			$("#firstName").val("Test");
         			$('#updateModal').modal('show');
+        			$("#firstName").val(data.firstName);
+        			$("#lastName").val(data.lastName);
+        			$("#email").val(data.email);
+        			$("#phone").val(data.phone);
         		},
         		error : function(data) {
         			console.log("ERROR");

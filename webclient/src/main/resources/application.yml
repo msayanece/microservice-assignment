@@ -14,6 +14,7 @@ service:
   url:
     register: /user/create
     login: /jwt/auth
+    logout: /jwt/invalidate
     getUserDetails: /user/
   authServer: http://user-auth-service
 

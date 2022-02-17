@@ -3,10 +3,12 @@ package com.sayan.webclient.controllers;
 import com.sayan.webclient.models.*;
 import com.sayan.webclient.services.CookieService;
 import com.sayan.webclient.services.UserService;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -32,7 +34,15 @@ public class WebController {
         return "login";
     }
     @GetMapping("/dashboard")
-    public String dashboardPage(@CookieValue(value = ACCESS_TOKEN) String token){
+    public String dashboardPage(@CookieValue(value = ACCESS_TOKEN, defaultValue = "") String token,
+                                Model model){
+        if(StringUtils.isEmpty(token)) return "redirect:login";
+
+        UserModel userDetails = userService.getUserDetails(token);
+        if (userDetails == null) {
+            return "redirect:login";
+        }
+        model.addAttribute("user", userDetails);
         return "dashboard";
     }
     @GetMapping("/register")
@@ -87,17 +97,19 @@ public class WebController {
     @ResponseBody
     public UserModel updateProfile(
             @RequestBody UpdateUserModel updateUserModel,
-            @CookieValue(value = ACCESS_TOKEN) String token){
+            @CookieValue(value = ACCESS_TOKEN, defaultValue = "") String token){
         System.out.println(updateUserModel);
         UserModel userModel = UserModel.builder()
                 .firstName(updateUserModel.getFirstName())
                 .lastName(updateUserModel.getLastName())
+                .phone(updateUserModel.getPhone())
+                .email(updateUserModel.getEmail())
                 .build();
         return userModel;
     }
 
     @GetMapping("/userDetails")
-    public String getUserDetails(@CookieValue(value = ACCESS_TOKEN) String token){
+    public String getUserDetails(@CookieValue(value = ACCESS_TOKEN, defaultValue = "") String token){
         UserModel userDetails = userService.getUserDetails(token);
         return userDetails.toString();
     }
@@ -105,9 +117,7 @@ public class WebController {
     @GetMapping("/logout")
     public String logout(@CookieValue(value = ACCESS_TOKEN, defaultValue = "") String token, HttpServletRequest request,
                          HttpServletResponse response){
-//        final Cookie[] cookies = request.getCookies();
-//        final String accessToken = cookieService.getCookieValueByName(cookies, ACCESS_TOKEN);
-//        userService.doLogout(accessToken);
+        userService.doLogout(token);
         cookieService.addCookie(response, ACCESS_TOKEN, null, "/");
         return "redirect:login";
     }
