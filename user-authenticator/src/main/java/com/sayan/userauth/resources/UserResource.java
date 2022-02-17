@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
+@CrossOrigin
 public class UserResource {
 
     private final Logger logger = LoggerFactory.getLogger(UserResource.class);
@@ -48,13 +49,22 @@ public class UserResource {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<User> createUser(@RequestBody UserModel user) throws RuntimeException{
+    public ResponseEntity<UserModel> createUser(@RequestBody UserModel user) throws RuntimeException{
         logger.trace("createUser: called");
         if (user == null){
             logger.error("createUser: User object null");
             throw new RuntimeException("User is Required.");
         }
-        ResponseEntity<User> response = new ResponseEntity<>(userService.insertNewUser(user), HttpStatus.CREATED);
+        User resultUser = userService.insertNewUser(user);
+        UserModel userModelResult = UserModel.builder()
+                .username(resultUser.getUsername())
+                .firstName(resultUser.getFirstName())
+                .email(resultUser.getEmail())
+                .lastName(resultUser.getLastName())
+                .password(resultUser.getPassword())
+                .phone(resultUser.getPhone())
+                .build();
+        ResponseEntity<UserModel> response = new ResponseEntity<>(userModelResult, HttpStatus.CREATED);
         logger.trace("createUser: response: " + response);
         return response;
     }

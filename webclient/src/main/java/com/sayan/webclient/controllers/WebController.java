@@ -65,7 +65,11 @@ public class WebController {
             UserModel userModel,
             @CookieValue(value = "token", defaultValue = "test") String token){
         System.out.println(userModel);
-        return "redirect:dashboard";
+        if(userService.register(userModel)){
+            return "redirect:login";
+        }else {
+            return "redirect:register";
+        }
     }
 
     @PostMapping("/updateProfile")

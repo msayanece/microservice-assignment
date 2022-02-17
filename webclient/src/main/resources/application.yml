@@ -9,3 +9,9 @@ server:
 eureka:
   instance:
     preferIpAddress: true
+
+service:
+  url:
+    register: /user/create
+    getUserDetails: /user/
+  authServer: http://user-auth-service
