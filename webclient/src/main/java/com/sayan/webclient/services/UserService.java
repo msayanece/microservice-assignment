@@ -1,5 +1,7 @@
 package com.sayan.webclient.services;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import com.sayan.webclient.models.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +39,19 @@ public class UserService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @HystrixCommand(fallbackMethod = "getUserDetailsFallback",
+            commandProperties = {
+                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "2000"),
+                    @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "5"),
+                    @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "50"),
+                    @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "5000"),
+            },
+            threadPoolKey = "userPool",
+            threadPoolProperties = {
+                    @HystrixProperty(name = "coreSize", value = "20"),
+                    @HystrixProperty(name = "maxQueueSize", value = "10")
+            }
+    )
     @Nullable
     public UserModel getUserDetails(String token) {
         ResponseEntity<UserModel> responseEntity = null;
@@ -54,6 +69,10 @@ public class UserService {
             return null;
         }
         return responseEntity.getBody();
+    }
+
+    public UserModel getUserDetailsFallback(String token) {
+        return new UserModel("Unable to load", "Unable to load", "Unable to load", "Unable to load", "Unable to load", "Unable to load", "Unable to load");
     }
 
     public UserModel updateUser(String token, UpdateUserModel updateUserModel) {
@@ -147,6 +166,19 @@ public class UserService {
         return responseEntity.getBody().getJwtToken();
     }
 
+    @HystrixCommand(fallbackMethod = "loginFallback",
+            commandProperties = {
+                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "2000"),
+                    @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "5"),
+                    @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "50"),
+                    @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "5000"),
+            },
+            threadPoolKey = "userPool",
+            threadPoolProperties = {
+                    @HystrixProperty(name = "coreSize", value = "20"),
+                    @HystrixProperty(name = "maxQueueSize", value = "10")
+            }
+    )
     @Nullable
     public String login(LoginModel loginModel) {
         ResponseEntity<JwtResponse> responseEntity = null;
@@ -167,6 +199,10 @@ public class UserService {
         }
         logger.info(Objects.requireNonNull(responseEntity.getBody()).toString());
         return responseEntity.getBody().getJwtToken();
+    }
+
+    public String loginFallback(LoginModel loginModel){
+        return "";
     }
 
     public Boolean doLogout(String token) {

@@ -20,5 +20,7 @@ service:
     logout: /jwt/invalidate
     getUserDetails: /user/
   authServer: http://user-auth-service
-
+logging:
+  level:
+    root: INFO
 env: local
