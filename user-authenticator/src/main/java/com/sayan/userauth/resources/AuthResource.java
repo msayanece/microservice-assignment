@@ -37,9 +37,16 @@ public class AuthResource {
     @Autowired
     private UserService userService;
 
+    /**
+     * Use to authenticate an user using username and password and generate JWT token
+     * @param jwtRequest username-password data
+     * @return JWT token
+     * @throws Exception
+     */
     @PostMapping("/auth")
     public ResponseEntity<JwtResponse> authenticate(@RequestBody JwtRequest jwtRequest) throws Exception{
         System.out.println("AUTHENTICATION STARTS...");
+        //try to authenticate
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -54,20 +61,24 @@ public class AuthResource {
             e.printStackTrace();
             throw new Exception("INVALID_CREDENTIALS GENERAL EXCEPTION", e);
         }
-
+        //load user details
         final UserDetails userDetails
                 = userService.loadUserByUsername(jwtRequest.getUsername());
-
+        //generate token
         final String token =
                 jwtUtility.generateToken(userDetails);
-
+        //return token
         return  new ResponseEntity<>(new JwtResponse(token), HttpStatus.OK);
     }
 
+    /**
+     * logout action
+     * @return success if logout successful
+     */
     @PostMapping("/invalidate")
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false,
             paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
-    public ResponseEntity<LogoutResponse> invalidate() throws Exception{
+    public ResponseEntity<LogoutResponse> invalidate() {
         logger.trace("LOGOUT OPERATION STARTS...");
         //add to Redis blacklist
         logger.trace("LOGOUT OPERATION ENDS...");

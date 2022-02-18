@@ -23,6 +23,10 @@ public class UserResource {
     @Autowired
     private AuthResource authResource;
 
+    /**
+     * get user details using the JWT token owner
+     * @return user data
+     */
     @GetMapping("/")
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false,
             paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
@@ -46,6 +50,12 @@ public class UserResource {
         return response;
     }
 
+    /**
+     * Register/insert a new user
+     * @param user user data
+     * @return Created user
+     * @throws RuntimeException
+     */
     @PostMapping("/create")
     public ResponseEntity<UserModel> createUser(@RequestBody UserModel user) throws RuntimeException{
         logger.trace("createUser: called");
@@ -67,6 +77,12 @@ public class UserResource {
         return response;
     }
 
+    /**
+     * Update a user data using the JWT token
+     * @param user user data
+     * @return the updated user
+     * @throws RuntimeException
+     */
     @PostMapping("/update")
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false,
             paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
@@ -90,6 +106,12 @@ public class UserResource {
         return response;
     }
 
+    /**
+     * Used to validate a username for resetting a password
+     * @param passwordModel holds username data
+     * @return response isValid
+     * @throws RuntimeException
+     */
     @PostMapping("/forgotPassword")
     public ResponseEntity<ForgotPasswordResponse> forgotPassword(@RequestBody ResetPasswordModel passwordModel) throws RuntimeException{
         logger.trace("forgotPassword: called");
@@ -104,6 +126,12 @@ public class UserResource {
         return response;
     }
 
+    /**
+     * reset password, after validating the user identification
+     * @param passwordModel new password data
+     * @return the generated JWT token
+     * @throws RuntimeException
+     */
     @PostMapping("/resetPassword")
     public ResponseEntity<JwtResponse> resetPassword(@RequestBody PasswordModel passwordModel) throws RuntimeException{
         logger.trace("resetPassword: called");

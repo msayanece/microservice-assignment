@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/test")
 public class TestResource {
 
+    /**
+     * Used for testing purpose
+     * @return
+     */
     @GetMapping
     public String test(){
         return "Service is working fine.";

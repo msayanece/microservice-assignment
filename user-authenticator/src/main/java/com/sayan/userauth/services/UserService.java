@@ -29,6 +29,11 @@ public class UserService implements UserDetailsService {
         return new MyUserDetails(optionalUser.get());
     }
 
+    /**
+     * create a user
+     * @param user
+     * @return
+     */
     public User insertNewUser(UserModel user){
         final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(11);
 
@@ -45,6 +50,12 @@ public class UserService implements UserDetailsService {
         return userRepository.save(userEntity);
     }
 
+    /**
+     * update a user
+     * @param user
+     * @param username
+     * @return
+     */
     public User updateUser(UserModel user, String username) {
         Optional<User> foundOptionalUser = userRepository.findByUsername(username);
         if (!foundOptionalUser.isPresent()) {
@@ -58,6 +69,11 @@ public class UserService implements UserDetailsService {
         return userRepository.save(foundUser);
     }
 
+    /**
+     * reset/update password
+     * @param passwordModel
+     * @return
+     */
     public boolean resetPassword(PasswordModel passwordModel){
         final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(11);
         //check password valid
@@ -77,6 +93,11 @@ public class UserService implements UserDetailsService {
         return true;
     }
 
+    /**
+     * checks if a username is found in the dataase
+     * @param username
+     * @return
+     */
     public Boolean validateUsername(String username) {
         Optional<User> optionalUser = userRepository.findByUsername(username);
         return optionalUser.isPresent();
