@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.sayan.webclient.util.Constants.SERVER_BUSY;
+
 @Service
 public class UserService {
     private final Logger logger = LoggerFactory.getLogger(UserService.class);
@@ -202,7 +204,7 @@ public class UserService {
     }
 
     public String loginFallback(LoginModel loginModel){
-        return "";
+        return SERVER_BUSY;
     }
 
     public Boolean doLogout(String token) {
