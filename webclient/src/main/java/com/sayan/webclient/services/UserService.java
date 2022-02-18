@@ -41,19 +41,7 @@ public class UserService {
     @Autowired
     private RestTemplate restTemplate;
 
-    @HystrixCommand(fallbackMethod = "getUserDetailsFallback",
-            commandProperties = {
-                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "2000"),
-                    @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "5"),
-                    @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "50"),
-                    @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "5000"),
-            },
-            threadPoolKey = "userPool",
-            threadPoolProperties = {
-                    @HystrixProperty(name = "coreSize", value = "20"),
-                    @HystrixProperty(name = "maxQueueSize", value = "10")
-            }
-    )
+    @HystrixCommand(fallbackMethod = "getUserDetailsFallback", threadPoolKey = "getProductThreadPool", commandKey = "getProductServiceCommand")
     @Nullable
     public UserModel getUserDetails(String token) {
         ResponseEntity<UserModel> responseEntity = null;
@@ -74,9 +62,11 @@ public class UserService {
     }
 
     public UserModel getUserDetailsFallback(String token) {
-        return new UserModel("Unable to load", "Unable to load", "Unable to load", "Unable to load", "Unable to load", "Unable to load", "Unable to load");
+        return new UserModel("Unable to load", "Unable to load", "Unable to load",
+                "Unable to load", "Unable to load", "Unable to load", "--");
     }
 
+    @HystrixCommand(fallbackMethod = "updateUserFallback", threadPoolKey = "getProductThreadPool", commandKey = "getProductServiceCommand")
     public UserModel updateUser(String token, UpdateUserModel updateUserModel) {
         ResponseEntity<UserModel> responseEntity = null;
         UserModel user = UserModel.builder()
@@ -105,6 +95,12 @@ public class UserService {
         return responseEntity.getBody();
     }
 
+    public UserModel updateUserFallback(String token, UpdateUserModel updateUserModel){
+        return new UserModel("Unable to load", "Unable to load", "Unable to load",
+                "Unable to load", "Unable to load", "Unable to load", "--");
+    }
+
+    @HystrixCommand(fallbackMethod = "registerFallback", threadPoolKey = "getProductThreadPool", commandKey = "getProductServiceCommand")
     public boolean register(UserModel userModel) {
         ResponseEntity<UserModel> responseEntity = null;
 
@@ -126,6 +122,10 @@ public class UserService {
         return true;
     }
 
+    public boolean registerFallback(UserModel userModel){
+        return false;
+    }
+    @HystrixCommand(fallbackMethod = "initiateForgotPasswordFallback", threadPoolKey = "getProductThreadPool", commandKey = "getProductServiceCommand")
     public Boolean initiateForgotPassword(ResetPasswordModel resetPasswordModel) {
         ResponseEntity<ForgotPasswordResponse> responseEntity = null;
 
@@ -147,6 +147,11 @@ public class UserService {
         return responseEntity.getBody().getIsValid();
     }
 
+    public Boolean initiateForgotPasswordFallback(ResetPasswordModel resetPasswordModel){
+        return false;
+    }
+
+    @HystrixCommand(fallbackMethod = "resetPasswordFallback", threadPoolKey = "getProductThreadPool", commandKey = "getProductServiceCommand")
     public String resetPassword(PasswordModel passwordModel) {
         ResponseEntity<JwtResponse> responseEntity = null;
 
@@ -168,19 +173,10 @@ public class UserService {
         return responseEntity.getBody().getJwtToken();
     }
 
-    @HystrixCommand(fallbackMethod = "loginFallback",
-            commandProperties = {
-                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "2000"),
-                    @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "5"),
-                    @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "50"),
-                    @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "5000"),
-            },
-            threadPoolKey = "userPool",
-            threadPoolProperties = {
-                    @HystrixProperty(name = "coreSize", value = "20"),
-                    @HystrixProperty(name = "maxQueueSize", value = "10")
-            }
-    )
+    public String resetPasswordFallback(PasswordModel passwordModel){
+        return SERVER_BUSY;
+    }
+    @HystrixCommand(fallbackMethod = "loginFallback", threadPoolKey = "getProductThreadPool", commandKey = "getProductServiceCommand")
     @Nullable
     public String login(LoginModel loginModel) {
         ResponseEntity<JwtResponse> responseEntity = null;
@@ -207,6 +203,7 @@ public class UserService {
         return SERVER_BUSY;
     }
 
+    @HystrixCommand(fallbackMethod = "doLogoutFallback", threadPoolKey = "getProductThreadPool", commandKey = "getProductServiceCommand")
     public Boolean doLogout(String token) {
         ResponseEntity<LogoutResponse> responseEntity = null;
 
@@ -226,4 +223,7 @@ public class UserService {
         return responseEntity.getBody().getResult().equals("success");
     }
 
+    public Boolean doLogoutFallback(String token){
+        return false;
+    }
 }

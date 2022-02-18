@@ -85,9 +85,8 @@ public class WebController {
         }
     }
     @PostMapping("/doResetPassword")
-    public String doResetPassword(ResetPasswordModel resetPasswordModel, Model model,
-                                  HttpServletResponse response){
-        System.out.println(resetPasswordModel);
+    public String doResetPassword(ResetPasswordModel resetPasswordModel, HttpServletResponse response){
+        logger.info(resetPasswordModel.toString());
         if(userService.initiateForgotPassword(resetPasswordModel)){
             cookieService.addCookie(response, USER_NAME, resetPasswordModel.getUsername(), "/");
             return "redirect:newPassword";
@@ -99,7 +98,7 @@ public class WebController {
     public String addNewPassword(@CookieValue(value = USER_NAME, defaultValue = "") String username,
                                  PasswordModel passwordModel, HttpServletResponse response){
         passwordModel.setUsername(username);
-        System.out.println(passwordModel);
+        logger.info(passwordModel.toString());
         String jwt = userService.resetPassword(passwordModel);
         if (jwt == null){
             cookieService.addCookie(response, ACCESS_TOKEN, null, "/");

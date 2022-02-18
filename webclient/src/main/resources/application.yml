@@ -24,3 +24,19 @@ logging:
   level:
     root: INFO
 env: local
+
+hystrix:
+  command:
+    getProductServiceCommand:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 2000
+      circuitBreaker:
+        requestVolumeThreshold: 5
+        sleepWindowInMilliseconds: 2000
+        errorThresholdPercentage: 20
+  threadpool:
+    getProductServiceThreadPool:
+      coreSize: 30
+      maxQueueSize: 5
