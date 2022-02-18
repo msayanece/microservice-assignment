@@ -8,7 +8,26 @@ $(document).ready(function() {
         $("#wait").css('visibility', 'hidden');
     });
     $("#updateBtn").click(function(event) {
-        event.preventDefault();
+        if(!$("#firstName").val()){
+            $("#error").text("First name mandatory.")
+            return
+        }
+        if(!$("#lastName").val()){
+            $("#error").text("Last name mandatory.")
+            return
+        }
+        if(!$("#email").val()){
+            $("#error").text("Email address mandatory.")
+            return
+        }
+        if(!$("#phone").val()){
+            $("#error").text("Phone number mandatory.")
+            return
+        }
+        if(!$("#phone").val().length != 10){
+            $("#error").text("Phone number mandatory.")
+            return
+        }
         var data = {
             "firstName": $("#firstName").val(),
             "lastName": $("#lastName").val(),
@@ -18,6 +37,7 @@ $(document).ready(function() {
         console.log("DATA: ", data)
         var jsonData = JSON.stringify(data)
         console.log(jsonData)
+        event.preventDefault();
         $.ajax({
         		type : "POST",
         		url : "updateProfile",
