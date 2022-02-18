@@ -8,6 +8,7 @@ $(document).ready(function() {
         $("#wait").css('visibility', 'hidden');
     });
     $("#updateBtn").click(function(event) {
+        $("#error").text("")
         if(!$("#firstName").val()){
             $("#error").text("First name mandatory.")
             return
@@ -24,10 +25,11 @@ $(document).ready(function() {
             $("#error").text("Phone number mandatory.")
             return
         }
-        if(!$("#phone").val().length != 10){
-            $("#error").text("Phone number mandatory.")
+        if(!$("#phone").val().match('[789][0-9]{9}')){
+            $("#error").text("Phone number must be of 10 digit.")
             return
         }
+        event.preventDefault();
         var data = {
             "firstName": $("#firstName").val(),
             "lastName": $("#lastName").val(),
@@ -37,7 +39,6 @@ $(document).ready(function() {
         console.log("DATA: ", data)
         var jsonData = JSON.stringify(data)
         console.log(jsonData)
-        event.preventDefault();
         $.ajax({
         		type : "POST",
         		url : "updateProfile",

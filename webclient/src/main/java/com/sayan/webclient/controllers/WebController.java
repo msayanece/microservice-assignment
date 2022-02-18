@@ -32,10 +32,18 @@ public class WebController {
 
     //---------Pages------------
 
+    /**
+     * Login page resource
+     * @return page name
+     */
     @GetMapping("/login")
     public String loginPage(){
         return "login";
     }
+    /**
+     * Dashboard page resource
+     * @return page name
+     */
     @GetMapping("/dashboard")
     public String dashboardPage(@CookieValue(value = ACCESS_TOKEN, defaultValue = "") String token,
                                 Model model){
@@ -48,14 +56,27 @@ public class WebController {
         model.addAttribute("user", userDetails);
         return "dashboard";
     }
+    /**
+     * Registration page resource
+     * @return page name
+     */
     @GetMapping("/register")
     public String register(){
         return "registration";
     }
+    /**
+     * Reset (forgot) Password page resource, used for validating username and 
+     * then redirect to set new password page
+     * @return page name
+     */
     @GetMapping("/resetPassword")
     public String resetPassword(){
         return "reset-password";
     }
+    /**
+     * New Password page resource
+     * @return page name
+     */
     @GetMapping("/newPassword")
     public String newPassword(){
         return "new-password";
@@ -63,6 +84,13 @@ public class WebController {
 
     //-------------Actions---------------
 
+    /**
+     * Login action
+     * @param loginModel holds login data
+     * @param response http response
+     * @param redirectAttributes for redirection
+     * @return model and view object with page name and model value if required
+     */
     @PostMapping("/doLogin")
     public ModelAndView doLogin(LoginModel loginModel, HttpServletResponse response,
                           RedirectAttributes redirectAttributes){
@@ -84,6 +112,14 @@ public class WebController {
             return new ModelAndView(redirectView);
         }
     }
+
+    /**
+     * Forgot password action - validate username and redirect
+     * @param resetPasswordModel holds username data
+     * @param response http response
+     * @param redirectAttributes for redirection
+     * @return model and view object with page name and model value if required
+     */
     @PostMapping("/doResetPassword")
     public ModelAndView doResetPassword(ResetPasswordModel resetPasswordModel, HttpServletResponse response,
                                   RedirectAttributes redirectAttributes){
@@ -98,6 +134,15 @@ public class WebController {
             return new ModelAndView(redirectView);
         }
     }
+
+    /**
+     * reset password action - for a valid username
+     * @param username cookie
+     * @param passwordModel holds password data
+     * @param response http response
+     * @param redirectAttributes for redirection
+     * @return model and view object with page name and model value if required
+     */
     @PostMapping("/addNewPassword")
     public ModelAndView addNewPassword(@CookieValue(value = USER_NAME, defaultValue = "") String username,
                                  PasswordModel passwordModel, HttpServletResponse response,
@@ -121,6 +166,13 @@ public class WebController {
             return new ModelAndView(redirectView);
         }
     }
+
+    /**
+     * register a new user action
+     * @param userModel holds user data
+     * @param redirectAttributes for redirection
+     * @return model and view object with page name and model value if required
+     */
     @PostMapping("/doRegister")
     public ModelAndView doRegister(UserModel userModel, RedirectAttributes redirectAttributes){
         logger.info(userModel.toString());
@@ -134,6 +186,12 @@ public class WebController {
         }
     }
 
+    /**
+     * update profile data action
+     * @param updateUserModel data
+     * @param token jwt token from http cookie
+     * @return UserModel object with updated data
+     */
     @PostMapping("/updateProfile")
     @ResponseBody
     public UserModel updateProfile(
@@ -143,17 +201,22 @@ public class WebController {
         return userService.updateUser(token, updateUserModel);
     }
 
-    @GetMapping("/userDetails")
-    public String getUserDetails(@CookieValue(value = ACCESS_TOKEN, defaultValue = "") String token){
-        UserModel userDetails = userService.getUserDetails(token);
-        return userDetails.toString();
-    }
-
+    /**
+     * logout action, invalidate token, this will remove/reset the token value stored in
+     * http cookie for clearing session
+     * @param token the jwt token in http cookie
+     * @param request http request
+     * @param response http response
+     * @return the redirected page
+     */
     @GetMapping("/logout")
     public String logout(@CookieValue(value = ACCESS_TOKEN, defaultValue = "") String token, HttpServletRequest request,
                          HttpServletResponse response){
-        userService.doLogout(token);
-        cookieService.addCookie(response, ACCESS_TOKEN, null, "/");
-        return "redirect:login";
+        if (!userService.doLogout(token)) {
+            return "redirect:dashboard";
+        }else {
+            cookieService.addCookie(response, ACCESS_TOKEN, null, "/");
+            return "redirect:login";
+        }
     }
 }
