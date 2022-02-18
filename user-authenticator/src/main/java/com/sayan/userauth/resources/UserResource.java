@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,6 +20,8 @@ public class UserResource {
     private final Logger logger = LoggerFactory.getLogger(UserResource.class);
     @Autowired
     private UserService userService;
+    @Autowired
+    private AuthResource authResource;
 
     @GetMapping("/")
     @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false,
@@ -92,15 +92,37 @@ public class UserResource {
 
     @PostMapping("/forgotPassword")
     public ResponseEntity<ForgotPasswordResponse> forgotPassword(@RequestBody ResetPasswordModel passwordModel) throws RuntimeException{
-        logger.trace("changePassword: called");
+        logger.trace("forgotPassword: called");
         if (passwordModel == null){
-            logger.error("changePassword: passwordModel object null");
-            throw new RuntimeException("passwordModel is Required.");
+            logger.error("forgotPassword: passwordModel object null");
+            throw new RuntimeException("ResetPasswordModel is Required.");
         }
-        Boolean isValid = userService.validateUserEmail(passwordModel.getEmailId());
+        Boolean isValid = userService.validateUsername(passwordModel.getUsername());
         ResponseEntity<ForgotPasswordResponse> response =
                 new ResponseEntity<>(new ForgotPasswordResponse(isValid), HttpStatus.OK);
-        logger.trace("changePassword: response: " + response);
+        logger.trace("forgotPassword: response: " + response);
         return response;
+    }
+
+    @PostMapping("/resetPassword")
+    public ResponseEntity<JwtResponse> resetPassword(@RequestBody PasswordModel passwordModel) throws RuntimeException{
+        logger.trace("resetPassword: called");
+        ResponseEntity<JwtResponse> jwtResponse = null;
+        if (passwordModel == null){
+            logger.error("resetPassword: PasswordModel object null");
+            throw new RuntimeException("PasswordModel is Required.");
+        }
+        Boolean isSuccess = userService.resetPassword(passwordModel);
+        try {
+            jwtResponse = authResource.authenticate(new JwtRequest(passwordModel.getUsername(), passwordModel.getNewPassword()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Server error: Unable to login");
+        }
+        if (jwtResponse == null) {
+            throw new RuntimeException("Server error: Unable to login");
+        }
+        logger.trace("resetPassword: response: " + jwtResponse);
+        return jwtResponse;
     }
 }

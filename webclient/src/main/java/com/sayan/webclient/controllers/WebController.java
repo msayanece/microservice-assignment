@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static com.sayan.webclient.util.Constants.ACCESS_TOKEN;
+import static com.sayan.webclient.util.Constants.USER_NAME;
 
 @Controller
 public class WebController {
@@ -65,7 +66,7 @@ public class WebController {
         logger.info(loginModel.toString());
         String jwt = userService.login(loginModel);
         if (jwt == null){
-            cookieService.addCookie(response, ACCESS_TOKEN, jwt, "/");
+            cookieService.addCookie(response, ACCESS_TOKEN, null, "/");
             return "redirect:login";
         }else {
             cookieService.addCookie(response, ACCESS_TOKEN, jwt, "/");
@@ -73,18 +74,29 @@ public class WebController {
         }
     }
     @PostMapping("/doResetPassword")
-    public String doResetPassword(ResetPasswordModel resetPasswordModel){
+    public String doResetPassword(ResetPasswordModel resetPasswordModel, Model model,
+                                  HttpServletResponse response){
         System.out.println(resetPasswordModel);
         if(userService.initiateForgotPassword(resetPasswordModel)){
+            cookieService.addCookie(response, USER_NAME, resetPasswordModel.getUsername(), "/");
             return "redirect:newPassword";
         }else {
             return "redirect:resetPassword";
         }
     }
     @PostMapping("/addNewPassword")
-    public String addNewPassword(AddNewPasswordModel addNewPasswordModel){
-        System.out.println(addNewPasswordModel);
-        return "redirect:dashboard";
+    public String addNewPassword(@CookieValue(value = USER_NAME, defaultValue = "") String username,
+                                 PasswordModel passwordModel, HttpServletResponse response){
+        passwordModel.setUsername(username);
+        System.out.println(passwordModel);
+        String jwt = userService.resetPassword(passwordModel);
+        if (jwt == null){
+            cookieService.addCookie(response, ACCESS_TOKEN, null, "/");
+            return "redirect:login";
+        }else {
+            cookieService.addCookie(response, ACCESS_TOKEN, jwt, "/");
+            return "redirect:dashboard";
+        }
     }
     @PostMapping("/doRegister")
     public String doRegister(

@@ -10,5 +10,5 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class ResetPasswordModel {
-    private String emailId;
+    private String username;
 }

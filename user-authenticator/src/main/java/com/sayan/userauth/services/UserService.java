@@ -10,8 +10,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -21,11 +22,11 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+        if (!optionalUser.isPresent()) {
             throw new UsernameNotFoundException("User not found");
         }
-        return new MyUserDetails(user);
+        return new MyUserDetails(optionalUser.get());
     }
 
     public User insertNewUser(UserModel user){
@@ -45,10 +46,11 @@ public class UserService implements UserDetailsService {
     }
 
     public User updateUser(UserModel user, String username) {
-        User foundUser = userRepository.findByUsername(username);
-        if (foundUser == null) {
+        Optional<User> foundOptionalUser = userRepository.findByUsername(username);
+        if (!foundOptionalUser.isPresent()) {
             throw new UsernameNotFoundException("User not found");
         }
+        User foundUser = foundOptionalUser.get();
         foundUser.setFirstName(user.getFirstName());
         foundUser.setLastName(user.getLastName());
         foundUser.setEmail(user.getEmail());
@@ -56,23 +58,27 @@ public class UserService implements UserDetailsService {
         return userRepository.save(foundUser);
     }
 
-    public User changePassword(PasswordModel passwordModel, String username){
+    public boolean resetPassword(PasswordModel passwordModel){
         final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(11);
-        //find user
-        User user = userRepository.findByUsername(username);
-        //validate password
-        if (!bCryptPasswordEncoder.matches(passwordModel.getOldPassword(), user.getPassword())){
-            throw new RuntimeException("Old Password does not match");
-        }
+        //check password valid
         if (!passwordModel.getNewPassword().equals(passwordModel.getConfirmPassword())){
             throw new RuntimeException("New Password does not match with Confirm Password");
         }
+        String encodedPassword = bCryptPasswordEncoder.encode(passwordModel.getNewPassword());
+        //find user
+        Optional<User> optionalUser = userRepository.findByUsername(passwordModel.getUsername());
+        if (!optionalUser.isPresent()){
+            throw new RuntimeException("User not found with email");
+        }
+        User user = optionalUser.get();
         //update password
-        user.setPassword(passwordModel.getNewPassword());
-        return userRepository.save(user);
+        user.setPassword(encodedPassword);
+        userRepository.save(user);
+        return true;
     }
 
-    public Boolean validateUserEmail(String emailId) {
-        return true;
+    public Boolean validateUsername(String username) {
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+        return optionalUser.isPresent();
     }
 }

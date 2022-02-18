@@ -10,5 +10,5 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class ForgotPasswordResponse {
-    private Boolean isValidEmail;
+    private Boolean isValid;
 }

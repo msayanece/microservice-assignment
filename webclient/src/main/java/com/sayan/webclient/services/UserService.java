@@ -28,6 +28,8 @@ public class UserService {
     private String registerUrl;
     @Value("${service.url.forgotPassword}")
     private String forgotPasswordUrl;
+    @Value("${service.url.resetPassword}")
+    private String resetPasswordUrl;
     @Value("${service.url.login}")
     private String loginUrl;
     @Value("${service.url.logout}")
@@ -121,7 +123,28 @@ public class UserService {
             return false;
         }
         logger.info(Objects.requireNonNull(responseEntity.getBody()).toString());
-        return responseEntity.getBody().getIsValidEmail();
+        return responseEntity.getBody().getIsValid();
+    }
+
+    public String resetPassword(PasswordModel passwordModel) {
+        ResponseEntity<JwtResponse> responseEntity = null;
+
+        String url = authServer + resetPasswordUrl;
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<PasswordModel> request = new HttpEntity<>(passwordModel, headers);
+
+        try{
+            responseEntity = restTemplate.exchange(url, HttpMethod.POST, request, JwtResponse.class);
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+        if (responseEntity.getBody() == null) {
+            return null;
+        }
+        logger.info(Objects.requireNonNull(responseEntity.getBody()).toString());
+        return responseEntity.getBody().getJwtToken();
     }
 
     @Nullable

@@ -10,7 +10,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class PasswordModel {
-    private String oldPassword;
+    private String username;
     private String newPassword;
     private String confirmPassword;
 }

@@ -1,4 +1,4 @@
-package com.sayan.userauth.models;
+package com.sayan.webclient.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +9,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class ForgotPasswordResponse {
-    private Boolean isValid;
+public class PasswordModel {
+    private String username;
+    private String newPassword;
+    private String confirmPassword;
 }

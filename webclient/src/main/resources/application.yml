@@ -15,6 +15,7 @@ service:
     register: /user/create
     updateUser: /user/update
     forgotPassword: /user/forgotPassword
+    resetPassword: /user/resetPassword
     login: /jwt/auth
     logout: /jwt/invalidate
     getUserDetails: /user/
