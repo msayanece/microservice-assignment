@@ -85,27 +85,40 @@ public class WebController {
         }
     }
     @PostMapping("/doResetPassword")
-    public String doResetPassword(ResetPasswordModel resetPasswordModel, HttpServletResponse response){
+    public ModelAndView doResetPassword(ResetPasswordModel resetPasswordModel, HttpServletResponse response,
+                                  RedirectAttributes redirectAttributes){
         logger.info(resetPasswordModel.toString());
         if(userService.initiateForgotPassword(resetPasswordModel)){
             cookieService.addCookie(response, USER_NAME, resetPasswordModel.getUsername(), "/");
-            return "redirect:newPassword";
+            RedirectView redirectView = new RedirectView("/newPassword", true);
+            return new ModelAndView(redirectView);
         }else {
-            return "redirect:resetPassword";
+            redirectAttributes.addFlashAttribute("error", USERNAME_NOT_FOUND);
+            RedirectView redirectView = new RedirectView("/resetPassword", true);
+            return new ModelAndView(redirectView);
         }
     }
     @PostMapping("/addNewPassword")
-    public String addNewPassword(@CookieValue(value = USER_NAME, defaultValue = "") String username,
-                                 PasswordModel passwordModel, HttpServletResponse response){
+    public ModelAndView addNewPassword(@CookieValue(value = USER_NAME, defaultValue = "") String username,
+                                 PasswordModel passwordModel, HttpServletResponse response,
+                                       RedirectAttributes redirectAttributes){
         passwordModel.setUsername(username);
         logger.info(passwordModel.toString());
         String jwt = userService.resetPassword(passwordModel);
         if (jwt == null){
             cookieService.addCookie(response, ACCESS_TOKEN, null, "/");
-            return "redirect:login";
+            redirectAttributes.addFlashAttribute("error", USERNAME_PASSWORD_NOT_FOUND);
+            RedirectView redirectView = new RedirectView("/login", true);
+            return new ModelAndView(redirectView);
+        }else if (jwt.equals(SERVER_BUSY)){
+            cookieService.addCookie(response, ACCESS_TOKEN, null, "/");
+            redirectAttributes.addFlashAttribute("error", SERVER_BUSY);
+            RedirectView redirectView = new RedirectView("/login", true);
+            return new ModelAndView(redirectView);
         }else {
             cookieService.addCookie(response, ACCESS_TOKEN, jwt, "/");
-            return "redirect:dashboard";
+            RedirectView redirectView = new RedirectView("/dashboard", true);
+            return new ModelAndView(redirectView);
         }
     }
     @PostMapping("/doRegister")
