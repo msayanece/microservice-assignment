@@ -1,5 +1,6 @@
 package com.sayan.userauth.resources;
 
+import com.sayan.userauth.exceptions.UserNotValidException;
 import com.sayan.userauth.models.JwtRequest;
 import com.sayan.userauth.models.JwtResponse;
 import com.sayan.userauth.models.LogoutResponse;
@@ -56,7 +57,7 @@ public class AuthResource {
             );
         } catch (BadCredentialsException e) {
             e.printStackTrace();
-            throw new Exception("INVALID_CREDENTIALS", e);
+            throw new UserNotValidException("INVALID_CREDENTIALS", e);
         } catch (Exception e){
             e.printStackTrace();
             throw new Exception("INVALID_CREDENTIALS GENERAL EXCEPTION", e);
