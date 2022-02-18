@@ -109,13 +109,15 @@ public class WebController {
         }
     }
     @PostMapping("/doRegister")
-    public String doRegister(
-            UserModel userModel){
+    public ModelAndView doRegister(UserModel userModel, RedirectAttributes redirectAttributes){
         logger.info(userModel.toString());
         if(userService.register(userModel)){
-            return "redirect:login";
+            RedirectView redirectView = new RedirectView("/login", true);
+            return new ModelAndView(redirectView);
         }else {
-            return "redirect:register";
+            redirectAttributes.addFlashAttribute("error", UNABLE_TO_REGISTER);
+            RedirectView redirectView = new RedirectView("/register", true);
+            return new ModelAndView(redirectView);
         }
     }
 
