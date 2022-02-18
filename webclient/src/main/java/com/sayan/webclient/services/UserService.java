@@ -26,6 +26,8 @@ public class UserService {
     private String updateUserUrl;
     @Value("${service.url.register}")
     private String registerUrl;
+    @Value("${service.url.forgotPassword}")
+    private String forgotPasswordUrl;
     @Value("${service.url.login}")
     private String loginUrl;
     @Value("${service.url.logout}")
@@ -101,6 +103,27 @@ public class UserService {
         return true;
     }
 
+    public Boolean initiateForgotPassword(ResetPasswordModel resetPasswordModel) {
+        ResponseEntity<ForgotPasswordResponse> responseEntity = null;
+
+        String url = authServer + forgotPasswordUrl;
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<ResetPasswordModel> request = new HttpEntity<>(resetPasswordModel, headers);
+
+        try{
+            responseEntity = restTemplate.exchange(url, HttpMethod.POST, request, ForgotPasswordResponse.class);
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        if (responseEntity.getBody() == null) {
+            return false;
+        }
+        logger.info(Objects.requireNonNull(responseEntity.getBody()).toString());
+        return responseEntity.getBody().getIsValidEmail();
+    }
+
     @Nullable
     public String login(LoginModel loginModel) {
         ResponseEntity<JwtResponse> responseEntity = null;
@@ -141,4 +164,5 @@ public class UserService {
         logger.info(Objects.requireNonNull(responseEntity.getBody()).toString());
         return responseEntity.getBody().getResult().equals("success");
     }
+
 }

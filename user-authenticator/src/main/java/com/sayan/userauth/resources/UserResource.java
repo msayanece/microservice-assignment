@@ -1,9 +1,7 @@
 package com.sayan.userauth.resources;
 
-import com.sayan.userauth.models.MyUserDetails;
+import com.sayan.userauth.models.*;
 import com.sayan.userauth.entities.User;
-import com.sayan.userauth.models.PasswordModel;
-import com.sayan.userauth.models.UserModel;
 import com.sayan.userauth.services.UserService;
 import io.swagger.annotations.ApiImplicitParam;
 import org.slf4j.Logger;
@@ -92,18 +90,16 @@ public class UserResource {
         return response;
     }
 
-    @PostMapping("/changePassword")
-    @ApiImplicitParam(name = "Authorization", value = "Access Token", required = true, allowEmptyValue = false,
-            paramType = "header", dataTypeClass = String.class, example = "Bearer access_token")
-    public ResponseEntity<User> changePassword(@RequestBody PasswordModel passwordModel) throws RuntimeException{
+    @PostMapping("/forgotPassword")
+    public ResponseEntity<ForgotPasswordResponse> forgotPassword(@RequestBody ResetPasswordModel passwordModel) throws RuntimeException{
         logger.trace("changePassword: called");
         if (passwordModel == null){
             logger.error("changePassword: passwordModel object null");
             throw new RuntimeException("passwordModel is Required.");
         }
-        MyUserDetails userDetails = (MyUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        ResponseEntity<User> response =
-                new ResponseEntity<>(userService.changePassword(passwordModel, userDetails.getUsername()), HttpStatus.OK);
+        Boolean isValid = userService.validateUserEmail(passwordModel.getEmailId());
+        ResponseEntity<ForgotPasswordResponse> response =
+                new ResponseEntity<>(new ForgotPasswordResponse(isValid), HttpStatus.OK);
         logger.trace("changePassword: response: " + response);
         return response;
     }

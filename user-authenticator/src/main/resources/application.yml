@@ -6,23 +6,20 @@ jwt:
 
 logging:
   level:
-    root: DEBUG
+    root: INFO
 
 spring:
   application:
     name: user-auth-service
-  datasource:
-    url: jdbc:h2:mem:testdb
-    driverClassName: org.h2.Driver
-    username: sayan
-    password: pass
+  config:
+    import: "optional:configserver:"
+    cloud:
+      config:
+        uri: http://config-server
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
-  h2:
-    console:
-      enabled: false
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher

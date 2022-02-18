@@ -75,7 +75,11 @@ public class WebController {
     @PostMapping("/doResetPassword")
     public String doResetPassword(ResetPasswordModel resetPasswordModel){
         System.out.println(resetPasswordModel);
-        return "redirect:newPassword";
+        if(userService.initiateForgotPassword(resetPasswordModel)){
+            return "redirect:newPassword";
+        }else {
+            return "redirect:resetPassword";
+        }
     }
     @PostMapping("/addNewPassword")
     public String addNewPassword(AddNewPasswordModel addNewPasswordModel){

@@ -14,6 +14,7 @@ service:
   url:
     register: /user/create
     updateUser: /user/update
+    forgotPassword: /user/forgotPassword
     login: /jwt/auth
     logout: /jwt/invalidate
     getUserDetails: /user/

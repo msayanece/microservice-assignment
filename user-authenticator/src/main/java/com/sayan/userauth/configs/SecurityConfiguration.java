@@ -51,6 +51,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/jwt/auth",
                         "/user/create",
+                        "/user/forgotPassword",
                         "/test",
                         "/v2/api-docs",
                         "/swagger-resources/**",

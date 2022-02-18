@@ -71,4 +71,8 @@ public class UserService implements UserDetailsService {
         user.setPassword(passwordModel.getNewPassword());
         return userRepository.save(user);
     }
+
+    public Boolean validateUserEmail(String emailId) {
+        return true;
+    }
 }
