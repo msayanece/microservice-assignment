@@ -1,5 +1,6 @@
 package com.sayan.userauth.entities;
 
+import com.sun.istack.NotNull;
 import lombok.*;
 import org.hibernate.annotations.Generated;
 
@@ -27,7 +28,8 @@ public class User {
     @Column(
             name = "username",
             nullable = false,
-            updatable = false
+            updatable = false,
+            unique = true
     )
     private String username;
     @Column(
@@ -47,6 +49,7 @@ public class User {
             nullable = false,
             unique = true
     )
+    @NotNull
     private String email;
     @Column(
             name = "phone",

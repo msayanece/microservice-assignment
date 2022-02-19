@@ -2,6 +2,7 @@ package com.sayan.userauth.controlleradvice;
 
 import com.sayan.userauth.exceptions.UserNotFoundException;
 import com.sayan.userauth.models.ErrorResponseModel;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -34,6 +35,17 @@ public class UserResourceAdvice {
                 .timestamp(sdf2.format(timestamp))
                 .status(HttpStatus.BAD_REQUEST.value())
                 .message(exception.getMessage())
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(value = DataIntegrityViolationException.class)
+    public ResponseEntity<Object> exception(DataIntegrityViolationException exception) {
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        ErrorResponseModel response = ErrorResponseModel.builder()
+                .error("Illegal data")
+                .timestamp(sdf2.format(timestamp))
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message("Username, Email, Phone should be unique")
                 .build();
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
