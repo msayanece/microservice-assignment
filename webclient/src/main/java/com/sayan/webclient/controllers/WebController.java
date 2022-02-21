@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -32,11 +33,28 @@ public class WebController {
     //---------Pages------------
 
     /**
-     * Login page resource
+     * home page redirects to the login page
+     * @return
+     */
+    @GetMapping
+    public String home(){
+        return "redirect:login";
+    }
+
+    /**
+     * Login page resource, if session available redirects to the dashboard page
      * @return page name
      */
     @GetMapping("/login")
-    public String loginPage(){
+    public String loginPage(@CookieValue(value = ACCESS_TOKEN, defaultValue = "") String token,
+                            HttpServletResponse response){
+        //disable back
+        response.setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate");   //for http1.1
+        response.setHeader(HttpHeaders.PRAGMA, "no-cache");     //for http1.0
+        response.setHeader(HttpHeaders.EXPIRES, "0");           //for proxies
+        if (!StringUtils.isEmpty(token)){
+            return "redirect:dashboard";
+        }
         return "login";
     }
     /**
@@ -45,7 +63,12 @@ public class WebController {
      */
     @GetMapping("/dashboard")
     public String dashboardPage(@CookieValue(value = ACCESS_TOKEN, defaultValue = "") String token,
-                                Model model){
+                                Model model, HttpServletResponse response){
+        //disable back
+        response.setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate");   //for http1.1
+        response.setHeader(HttpHeaders.PRAGMA, "no-cache");     //for http1.0
+        response.setHeader(HttpHeaders.EXPIRES, "0");           //for proxies
+
         if(StringUtils.isEmpty(token)) return "redirect:login";
 
         UserModel userDetails = userService.getUserDetails(token);
@@ -60,7 +83,10 @@ public class WebController {
      * @return page name
      */
     @GetMapping("/register")
-    public String register(){
+    public String register(@CookieValue(value = ACCESS_TOKEN, defaultValue = "") String token){
+        if (!StringUtils.isEmpty(token)){
+            return "redirect:dashboard";
+        }
         return "registration";
     }
     /**
@@ -173,9 +199,15 @@ public class WebController {
      * @return model and view object with page name and model value if required
      */
     @PostMapping("/doRegister")
-    public ModelAndView doRegister(UserModel userModel, RedirectAttributes redirectAttributes){
+    public ModelAndView doRegister(UserModel userModel, RedirectAttributes redirectAttributes,
+                                   HttpServletResponse response){
         logger.info(userModel.toString());
         if(userService.register(userModel)){
+            //disable back
+            response.setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate");   //for http1.1
+            response.setHeader(HttpHeaders.PRAGMA, "no-cache");     //for http1.0
+            response.setHeader(HttpHeaders.EXPIRES, "0");           //for proxies
+
             RedirectView redirectView = new RedirectView("/login", true);
             return new ModelAndView(redirectView);
         }else {
