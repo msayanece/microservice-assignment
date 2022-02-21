@@ -189,6 +189,11 @@ public class WebController {
             RedirectView redirectView = new RedirectView("/login", true);
             return new ModelAndView(redirectView);
         }else {
+            //disable back
+            response.setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate");   //for http1.1
+            response.setHeader(HttpHeaders.PRAGMA, "no-cache");     //for http1.0
+            response.setHeader(HttpHeaders.EXPIRES, "0");           //for proxies
+            //set data
             cookieService.addCookie(response, ACCESS_TOKEN, jwt, "/");
             RedirectView redirectView = new RedirectView("/dashboard", true);
             return new ModelAndView(redirectView);
