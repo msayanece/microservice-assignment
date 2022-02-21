@@ -16,7 +16,7 @@ public class GlobalControllerAdvice {
     private static final SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
 
     @ExceptionHandler(value = HttpMessageNotReadableException.class)
-    public ResponseEntity<Object> exception(HttpMessageNotReadableException exception) {
+    public ResponseEntity<Object> httpMessageNotReadableException(HttpMessageNotReadableException exception) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
         ErrorResponseModel response = ErrorResponseModel.builder()

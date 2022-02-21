@@ -16,7 +16,7 @@ public class UserResourceAdvice {
     private static final SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
 
     @ExceptionHandler(value = UserNotFoundException.class)
-    public ResponseEntity<Object> exception(UserNotFoundException exception) {
+    public ResponseEntity<Object> userNotFoundException(UserNotFoundException exception) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         ErrorResponseModel response = ErrorResponseModel.builder()
                 .error("User not found")
@@ -28,7 +28,7 @@ public class UserResourceAdvice {
     }
 
     @ExceptionHandler(value = IllegalArgumentException.class)
-    public ResponseEntity<Object> exception(IllegalArgumentException exception) {
+    public ResponseEntity<Object> illegalArgumentException(IllegalArgumentException exception) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         ErrorResponseModel response = ErrorResponseModel.builder()
                 .error("Illegal data")
