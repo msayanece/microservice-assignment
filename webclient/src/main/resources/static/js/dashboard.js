@@ -7,6 +7,9 @@ $(document).ready(function() {
     $(document).ajaxComplete(function(){
         $("#wait").css('visibility', 'hidden');
     });
+    $('#errorOk').click(function() {
+        location.reload();
+    });
     $("#updateBtn").click(function(event) {
         $("#error").text("")
         if(!$("#firstName").val()){

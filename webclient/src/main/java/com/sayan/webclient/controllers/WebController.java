@@ -11,12 +11,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
 
 import static com.sayan.webclient.util.Constants.*;
 
@@ -63,7 +66,7 @@ public class WebController {
      */
     @GetMapping("/dashboard")
     public String dashboardPage(@CookieValue(value = ACCESS_TOKEN, defaultValue = "") String token,
-                                Model model, HttpServletResponse response){
+                                Model model, HttpServletResponse response) throws HttpClientErrorException {
         //disable back
         response.setHeader(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate");   //for http1.1
         response.setHeader(HttpHeaders.PRAGMA, "no-cache");     //for http1.0
@@ -227,8 +230,12 @@ public class WebController {
     @ResponseBody
     public UserModel updateProfile(
             @RequestBody UpdateUserModel updateUserModel,
-            @CookieValue(value = ACCESS_TOKEN, defaultValue = "") String token){
+            @CookieValue(value = ACCESS_TOKEN, defaultValue = "") String token,
+            HttpServletResponse response) throws IOException {
         logger.info(updateUserModel.toString());
+        if (StringUtils.isEmpty(token)){
+            return null;
+        }
         return userService.updateUser(token, updateUserModel);
     }
 

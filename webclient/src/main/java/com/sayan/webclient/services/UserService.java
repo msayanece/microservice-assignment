@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.sayan.webclient.util.Constants.ACCESS_TOKEN;
 import static com.sayan.webclient.util.Constants.SERVER_BUSY;
 
 @Service
@@ -41,9 +42,9 @@ public class UserService {
     @Autowired
     private RestTemplate restTemplate;
 
-    @HystrixCommand(fallbackMethod = "getUserDetailsFallback", threadPoolKey = "getProductThreadPool", commandKey = "getProductServiceCommand")
+    @HystrixCommand(ignoreExceptions = { HttpClientErrorException.class}, fallbackMethod = "getUserDetailsFallback", threadPoolKey = "getProductThreadPool", commandKey = "getProductServiceCommand")
     @Nullable
-    public UserModel getUserDetails(String token) {
+    public UserModel getUserDetails(String token) throws HttpClientErrorException{
         ResponseEntity<UserModel> responseEntity = null;
 
         String url = authServer + getUserDetailsUrl;
@@ -54,6 +55,13 @@ public class UserService {
 
         try{
             responseEntity = restTemplate.exchange(url, HttpMethod.GET, request, UserModel.class);
+        }catch (HttpClientErrorException exception){
+            exception.printStackTrace();
+            if (exception.getRawStatusCode() == 403 || exception.getRawStatusCode() == 401){
+                throw exception;
+            }else {
+                return null;
+            }
         }catch (Exception e){
             e.printStackTrace();
             return null;
