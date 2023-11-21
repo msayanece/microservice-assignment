@@ -57,4 +57,9 @@ public class User {
             unique = true
     )
     private String phone;
+    @Column(
+            name = "reset_token",
+            unique = true
+    )
+    private String resetToken;
 }

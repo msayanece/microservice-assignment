@@ -37,7 +37,7 @@ public class UserAuthenticatorApplication {
 	private ApiInfo apiInfo(){
 		return new ApiInfo(
 				"Authentication Service",
-				"This service is used to authenticate an user and also manupulate user details. " +
+				"This service is used to authenticate an user and also manipulate user details. " +
 						"Some Operations: Registration, Login, Update user",
 				"1.0",
 				"Free to use",
